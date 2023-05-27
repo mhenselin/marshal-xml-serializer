@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory=".phpunit.cache"
+         executionOrder="depends,defects"
+         requireCoverageMetadata="false"
+         beStrictAboutCoverageMetadata="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="default">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <!-- Active assertions during tests. -->
+        <ini name="assert.active" value="1"/>
+        <!-- Ensure assertion failures are catchable. -->
+        <ini name="assert.bail" value="0"/>
+        <!-- Set error reporting to E_ALL. -->
+        <ini name="error_reporting" value="32767"/>
+        <!-- Do not limit memory during tests. -->
+        <ini name="memory_limit" value="-1"/>
+    </php>
+
+    <coverage includeUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="true">
+        <report>
+            <clover outputFile="./build/clover.xml"/>
+            <cobertura outputFile="./build/cobertura.xml"/>
+            <crap4j outputFile="./build/crap4j.xml" threshold="50"/>
+            <html outputDirectory="./build/clover-html" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="./build/coverage.php"/>
+            <text outputFile="./build/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="./build/xml-coverage"/>
+        </report>
+    </coverage>
+
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>

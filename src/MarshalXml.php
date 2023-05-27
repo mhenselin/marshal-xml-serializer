@@ -31,20 +31,23 @@ class MarshalXml extends Marshal {
      */
     protected static $encoding = 'UTF-8';
 
-    public static function setVersion(string $version) {
+    public static function setVersion(string $version): void
+    {
         static::$version = $version;
     }
 
-    public static function setEncoding(string $encoding) {
+    public static function setEncoding(string $encoding): void
+    {
         static::$encoding = $encoding;
     }
 
     /**
      * @param DataStructure $dataStructure
      * @return string
-     * @throws \KingsonDe\Marshal\Exception\XmlSerializeException
+     * @throws XmlSerializeException
      */
-    public static function serialize(DataStructure $dataStructure) {
+    public static function serialize(DataStructure $dataStructure): string
+    {
         if ($dataStructure instanceof Collection || $dataStructure instanceof CollectionCallable) {
             throw new XmlSerializeException('Collections in XML cannot be generated at root level.');
         }
@@ -78,7 +81,8 @@ class MarshalXml extends Marshal {
      * @param array $nodes
      * @param \DOMElement|\DOMDocument $parentXmlNode
      */
-    protected static function processNodes(array $nodes, $parentXmlNode) {
+    protected static function processNodes(array $nodes, $parentXmlNode): void
+    {
         $dom = $parentXmlNode->ownerDocument ?? $parentXmlNode;
 
         foreach ($nodes as $name => $data) {
@@ -123,7 +127,7 @@ class MarshalXml extends Marshal {
     /**
      * @param string $xml
      * @return array
-     * @throws \KingsonDe\Marshal\Exception\XmlDeserializeException
+     * @throws XmlDeserializeException
      */
     public static function deserializeXmlToData(string $xml): array {
         try {

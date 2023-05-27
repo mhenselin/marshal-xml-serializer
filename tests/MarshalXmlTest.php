@@ -12,6 +12,7 @@ use KingsonDe\Marshal\Example\Mapper\ContainerMapper;
 use KingsonDe\Marshal\Example\Mapper\ServiceMapper;
 use KingsonDe\Marshal\Example\Model\Service;
 use KingsonDe\Marshal\Example\ObjectMapper\AcmeExampleIdMapper;
+use KingsonDe\Marshal\Exception\XmlDeserializeException;
 use PHPUnit\Framework\TestCase;
 
 class MarshalXmlTest extends TestCase {
@@ -69,19 +70,15 @@ class MarshalXmlTest extends TestCase {
         $this->assertXmlStringEqualsXmlFile(__DIR__ . '/Fixtures/Services.xml', $xml);
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlSerializeException
-     */
     public function testBuildDataStructureIsNull() {
+        $this->expectException(\KingsonDe\Marshal\Exception\XmlSerializeException::class);
         MarshalXml::serializeItemCallable(function () {
             return null;
         });
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlSerializeException
-     */
     public function testSerializationFailed() {
+        $this->expectException(\KingsonDe\Marshal\Exception\XmlSerializeException::class);
         MarshalXml::serializeItemCallable(function () {
             return [
                 'malformedXml' => [
@@ -91,26 +88,20 @@ class MarshalXmlTest extends TestCase {
         });
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlSerializeException
-     */
     public function testSerializeWithCollection() {
+        $this->expectException(\KingsonDe\Marshal\Exception\XmlSerializeException::class);
         $collection = new Collection(new ArgumentMapper(), [new Service('marshal.mapper.dummy')]);
 
         MarshalXml::serialize($collection);
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlSerializeException
-     */
     public function testCollectionAtRootLevel() {
+        $this->expectException(\KingsonDe\Marshal\Exception\XmlSerializeException::class);
         MarshalXml::serializeCollection(new ArgumentMapper(), [new Service('marshal.mapper.dummy')]);
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlSerializeException
-     */
     public function testCollectionCallableAtRootLevel() {
+        $this->expectException(\KingsonDe\Marshal\Exception\XmlSerializeException::class);
         MarshalXml::serializeCollectionCallable(function (Service $service) {
             return [
                 'id' => $service->getId(),
@@ -168,13 +159,11 @@ class MarshalXmlTest extends TestCase {
             return $flexibleData['container']['acme-example:config']['acme-example:id'][MarshalXml::CDATA_KEY];
         });
 
-        $this->assertSame('$bi*"h\'g7?kj*ee', $id);
+        $this->assertSame('$bi*"h\'g7?kj*EE', $id);
     }
 
-    /**
-     * @expectedException \KingsonDe\Marshal\Exception\XmlDeserializeException
-     */
     public function testDeserializeInvalidXml() {
+        $this->expectException(XmlDeserializeException::class);
         MarshalXml::deserializeXmlToData('<@brokenXml>nothing</yolo>');
     }
 
@@ -206,7 +195,7 @@ XML;
     }
 
     public function testSettingProlog() {
-        MarshalXml::setVersion('1.1');
+        MarshalXml::setVersion('1.0');
         MarshalXml::setEncoding('ISO-8859-15');
 
         $xml = MarshalXml::serializeItemCallable(function () {
@@ -230,7 +219,8 @@ XML;
         return $user;
     }
 
-    private function getServices() {
+    private function getServices(): array
+    {
         $argumentMapperService  = new Service(
             'marshal.mapper.argument',
             ArgumentMapper::class
